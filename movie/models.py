@@ -9,6 +9,15 @@ class  Genre(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
 
+    #toString pyton 3
+    def __str__(self):
+        return self.title
+
+    #toString pyton 2
+    def __unicode__(self):
+        return self.title
+
+
 class  Movie(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
@@ -18,3 +27,10 @@ class  Movie(models.Model):
     posted_by = models.ForeignKey(User)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+
+    #toString pyton 3
+    def __str__(self):
+        return self.title
+    #toString pyton 2
+    def __unicode__(self):
+        return self.title
