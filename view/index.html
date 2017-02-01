@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Pemesanan Tiket Bioskop Online</title>
+  </head>
+  <body>
+    <ul>
+      {% for data in object_list %}
+      <li><a href="/detail">{{data.title}} [{{data.show_status}}]</a></li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

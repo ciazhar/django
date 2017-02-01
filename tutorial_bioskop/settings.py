@@ -55,7 +55,7 @@ ROOT_URLCONF = 'tutorial_bioskop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['view'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
