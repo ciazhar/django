@@ -1,7 +1,7 @@
 Tutorial Django
 
 setup environment
-  install python 3
+  install python3
 
   pip install djanggo
   Note : pastikan install python-pip
@@ -28,7 +28,7 @@ aplikasi di browser :
 bikin apps :
   python manage.py startapp movie
 
-bikin model (models.py):
+bikin model (movie/models.py):
   from __future__ import unicode_literals
 
   from django.db import models
@@ -54,20 +54,22 @@ setting app (settings.py)
   'movie' ke INSTALLED_APPS
 
 
-migrasi database :
+  setting admin(admin.py)
+    from django.contrib import admin
+    from .models import Genre, Movie
+
+    # Register your models here.
+    class  GenreAdmin(admin.ModelAdmin):
+        pass
+
+    class  MovieAdmin(admin,ModelAdmin):
+        list_display = {'title', 'posted_by', 'show_from', 'show_until', 'created_at'}
+
+        admin.site.register(Genre, GenreAdmin)
+        admin.site.register(Movie, GenreAdmin)
+
+
+buat skrip migrasi :
   python manage.py makemigration
+migrasi ke database :
   python manage.py migrate
-
-setting admin(admin.py)
-  from django.contrib import admin
-  from .models import Genre, Movie
-
-  # Register your models here.
-  class  GenreAdmin(admin.ModelAdmin):
-      pass
-
-  class  MovieAdmin(admin,ModelAdmin):
-      list_display = {'title', 'posted_by', 'show_from', 'show_until', 'created_at'}
-
-      admin.site.register(Genre, GenreAdmin)
-      admin.site.register(Movie, GenreAdmin)
