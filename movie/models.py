@@ -41,7 +41,7 @@ class  Movie(models.Model):
         for data in genre:
             text += data.title+", "
         return text
-
+    #fungsi untuk menampilkan movie sedang tayang, sudah tayang atau segera tayang dengan representasi angka
     def in_show(self):
         now = datetime.now().date()
         if now >= self.show_from and now <= self.show_until:
@@ -50,7 +50,7 @@ class  Movie(models.Model):
             return -1 #sudah tayang
         else :
             return 0 #segera tayang
-
+    #fungsi untuk menampilkan movie sedang tayang, sudah tayang atau segera tayang dengan representasi angka
     def show_status(self):
         if self.in_show() == 1 :
             return "sedang tayang"
