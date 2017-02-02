@@ -115,23 +115,25 @@ buat fungsi untuk  Menampilkan macam-macam genre (movie/models.py)
   ```
 setting dependency movie(title, description dll) yang akan ditampilkan di UI (movie/admin.py)
   ```
-    #yang ditampilkan di movie
+    #menentukan field apa saja yang ditampilkan pada tabel UI Movie, termasuk kita bisa menampilkan methode dari model yang di return string
     list_display = ('title','show_genres', 'posted_by', 'show_from', 'show_until', 'created_at', 'show_status')
 
-    #yang ditampilan di form
+    #menentukan field apa saja yang ditampilkan pada form UI Movie
     fields = ('title','description', 'show_from', 'show_until', 'genres')
 
-    #otomatisasi save posted by
+    #override pada prosedur simpan
     def save_model(self, request, obj, form, change):
         obj.posted_by = request.user
         super(MovieAdmin, self).save_model(request,obj,form, change)
   ```
 #Service di sisi client berupa daftar movie
-setting directory template ke view (setting.py)
+setting directory template ke folder view (setting.py)
   ```
     TEMPLATES = [
         {
+            ...
             'DIRS': ['view'],
+            ...
         },
     ]
   ```
@@ -139,7 +141,7 @@ bikin UI (index.html)
 
 bikin service show status movie (movie/models.py)
   ```
-    #fungsi untuk menampilkan movie sedang tayang, sudah tayang atau segera tayang dengan representasi angka
+      #fungsi untuk menampilkan movie sedang tayang, sudah tayang atau segera tayang dengan representasi angka
       def in_show(self):
           now = datetime.now().date()
           if now >= self.show_from and now <= self.show_until:
