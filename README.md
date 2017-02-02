@@ -7,40 +7,39 @@
   ```
   Note : pastikan install python-pip
 
-#bikin project
+#Setup project
+- Bikin project
   ```
     django-admin startproject tutorial_bioskop
   ```
   NOte : pastikan install python-django-common
-
-add project ke text editor
-
-migrate database, secara default dia pake SQLite:
+- add project ke text editor
+- migrate database, secara default dia pake SQLite:
   ```
     python manage.py migrate
   ```
-
-bikin superuser
+- Bikin superuser
   ```
     python manage.py createsuperuser
   ```
-#jananin project
-jalankan aplikasi :
+
+#Run project
+- jalankan aplikasi :
   ```
     python manage.py runserver
   ```
-aplikasi di browser :
+- run aplikasi di browser :
   ```
     localhost:8000
   ```
   Note : buat accsess admin localhost:8000/admin, kalo mau ganti di urls.py
 
-#bikin apps movie
-bikin apps :
+#Bikin apps movie
+- bikin apps :
   ```
     python manage.py startapp movie
   ```
-bikin model (movie/models.py):
+- bikin model (movie/models.py):
   ```
     from __future__ import unicode_literals
 
@@ -61,12 +60,11 @@ bikin model (movie/models.py):
         created_at = models.DataField(auto_now_add=True)
         updated_at = models.DateField(auto_now=True)
   ```
-setting app (settings.py)
+- setting app (settings.py)
   ```
     'movie' ke INSTALLED_APPS
   ```
-
-setting admin(admin.py)
+- setting admin(admin.py)
   ```
     from django.contrib import admin
     from .models import Genre, Movie
@@ -80,19 +78,19 @@ setting admin(admin.py)
         admin.site.register(Genre, GenreAdmin)
         admin.site.register(Movie, GenreAdmin)
   ```
-
-buat skrip migrasi :
+- buat skrip migrasi :
   ```
     python manage.py makemigration
   ```
-migrasi ke database :
+- migrasi ke database :
   ```
     python manage.py migrate
   ```
-Hari ke 2
+
+#Hari ke 2
 
 #Setting UI untuk Movie
-untuk mengganti nama variabel yang ada di system menjadi berbeda di UI, bisa menggunakan verbose_name, atau menulis di parameter pertama(movie/models.py)
+- untuk mengganti nama variabel yang ada di system menjadi berbeda di UI, bisa menggunakan verbose_name, atau menulis di parameter pertama(movie/models.py)
   ```
     title = models.CharField(max_length=200, verbose_name="judul") #verbose_name digunakaan untuk mengubah nama di UI
     description = models.TextField("deskripsi",null=True, blank=True)#mengubah nama di UI juga bisa di parameter pertama
@@ -103,7 +101,7 @@ untuk mengganti nama variabel yang ada di system menjadi berbeda di UI, bisa men
     created_at = models.DateField(auto_now_add=True)#ketika kita membuat pertama kali akan dibuat pawa waktu pertama kali, ketika ada baru gk update
     updated_at = models.DateField(auto_now=True)#ketika membuat pertambahan maka akan diupdate
   ```
-buat fungsi untuk  Menampilkan macam-macam genre (movie/models.py)
+- buat fungsi untuk  Menampilkan macam-macam genre (movie/models.py)
   ```
     #fungsi Menampilkan macam-macam genre
       def show_genres(self):
@@ -113,7 +111,7 @@ buat fungsi untuk  Menampilkan macam-macam genre (movie/models.py)
               text += data.title+", "
           return text
   ```
-setting dependency movie(title, description dll) yang akan ditampilkan di UI (movie/admin.py)
+- setting dependency movie(title, description dll) yang akan ditampilkan di UI (movie/admin.py)
   ```
     #menentukan field apa saja yang ditampilkan pada tabel UI Movie, termasuk kita bisa menampilkan methode dari model yang di return string
     list_display = ('title','show_genres', 'posted_by', 'show_from', 'show_until', 'created_at', 'show_status')
@@ -126,8 +124,9 @@ setting dependency movie(title, description dll) yang akan ditampilkan di UI (mo
         obj.posted_by = request.user
         super(MovieAdmin, self).save_model(request,obj,form, change)
   ```
+
 #Service di sisi client berupa daftar movie
-setting directory template ke folder view (setting.py)
+- setting directory template ke folder view (setting.py)
   ```
     TEMPLATES = [
         {
@@ -137,9 +136,8 @@ setting directory template ke folder view (setting.py)
         },
     ]
   ```
-bikin UI (index.html)
-
-bikin service show status movie (movie/models.py)
+- bikin UI (index.html)
+- bikin service show status movie (movie/models.py)
   ```
       #fungsi untuk menampilkan movie sedang tayang, sudah tayang atau segera tayang dengan representasi angka
       def in_show(self):
@@ -159,7 +157,7 @@ bikin service show status movie (movie/models.py)
           else :
               return "segera tayang"
   ```
-setting view(movie/views.py)
+- setting view(movie/views.py)
   ```
     from django.shortcuts import render
     from django.views.generic import ListView, DetailView, TemplateView
@@ -169,25 +167,23 @@ setting view(movie/views.py)
         model = Movie
         template_name = 'index.html'
   ```
-bikin mapping url (urls.py)
+- bikin mapping url (urls.py)
   ```
     urlpatterns = [
         url(r'^$',IndexView.as_view(),name="index")#dollar ($) merupakan regular expression, merujuk pada url yang didepanya gak ada dan setelahnya gak ada
     ]
   ```
 
-Hari 3
+#Hari 3
+
 #Bootstrapping UI
 - Add File Bootstrap ke folder static
 - Setting default static files(settings.py)
   ```
-    
     STATIC_URL = '/static/'
-
     STATICFILES_DIRS = [
         os.path.join(BASE_DIR, "static"),
     ]
-
   ```
 - Load Static file ke UI (view/index.html)
   ```
@@ -229,7 +225,7 @@ Hari 3
   Note :
   sintaks {% block content %}{% endblock%} akan memanggil fungsi yang ada di dashboard.html
 
-  (view/index.html)
+(view/index.html)
   ```
     {% extends 'index.html' %}
     {% load static %}
@@ -248,6 +244,5 @@ Hari 3
           {% endif %}
         {% endfor %}
       </div>
-
     {% endblock%}
   ```
