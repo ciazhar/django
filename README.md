@@ -175,3 +175,79 @@ bikin mapping url (urls.py)
         url(r'^$',IndexView.as_view(),name="index")#dollar ($) merupakan regular expression, merujuk pada url yang didepanya gak ada dan setelahnya gak ada
     ]
   ```
+
+Hari 3
+#Bootstrapping UI
+- Add File Bootstrap ke folder static
+- Setting default static files(settings.py)
+  ```
+    
+    STATIC_URL = '/static/'
+
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, "static"),
+    ]
+
+  ```
+- Load Static file ke UI (view/index.html)
+  ```
+    ...
+    {%load static%}
+    ...
+    ...
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    ...
+  ```
+  Note :
+  dengan memanggil {% load static %} kita dapat menimpor file folder static
+  dengan memanggil {% static 'css/bootstrap.min.css' %}
+
+#Template Inheritance
+- Memasukkan komponen dari dashboard.html ke index.html menggunakan {% block nama-fungsi %}
+  (view/index.html)
+  ```
+    <div class="row">
+      <div class="col-md-9">
+          {% block content %}
+
+          {% endblock%}
+      </div>
+      <div class="col-md-3">
+          {% block sidebar %}
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Panel Sidebar
+              </div>
+              <div class="panel-body">
+                Panel Content
+              </div>
+            </div>
+          {% endblock%}
+      </div>
+    </div>
+  ```
+  Note :
+  sintaks {% block content %}{% endblock%} akan memanggil fungsi yang ada di dashboard.html
+
+  (view/index.html)
+  ```
+    {% extends 'index.html' %}
+    {% load static %}
+    {% block content %}
+      <h1>Tayang Sekarang</h1>
+      <div class="row">
+        {% for data in object_list %}
+          {% if data.in_show == 1 %}
+            <div class="col-md-4">
+              <a href="">
+                <img src="{% static 'images/no-pre.png' %}" alt="" />
+                <h3>{{data.title}}</h3>
+                <div>tayang : {{data.show_from}} - {{data.show_until}} </div>
+              </a>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+    {% endblock%}
+  ```

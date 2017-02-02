@@ -5,4 +5,4 @@ from .models import Movie
 
 class IndexView(ListView):
     model = Movie
-    template_name = 'index.html'
+    template_name = 'dashboard.html'

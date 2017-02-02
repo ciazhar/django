@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+  <h1>Tayang Sekarang</h1>
+  <div class="row">
+    {% for data in object_list %}
+      {% if data.in_show == 1 %}
+        <div class="col-md-4">
+          <a href="">
+            <img src="{% static 'images/no-pre.png' %}" alt="" />
+            <h3>{{data.title}}</h3>
+            <div>tayang : {{data.show_from}} - {{data.show_until}} </div>
+          </a>
+        </div>
+        <div class="col-md-1"></div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+{% endblock%}
