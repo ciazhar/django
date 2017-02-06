@@ -248,18 +248,23 @@
   ```
 
 Hari ke 4
-- Menmbahkan gambar models.py
+#Menambahkan Pengaturan untuk Upload Cover
+- Menmbahkan variabel untuk cover (models.py)
   ```
-  class  Movie(models.Model):
-    cover = models.ImageField(uploda_to="movie_covers/", blank=True, default="no-pre.png")
+    class  Movie(models.Model):
+      cover = models.ImageField(uplod_to="movie_covers/", blank=True, default="no-pre.png")
   ```
-  Note : seca
-- Install pillow
+  Note :
+- Install pillow(CLI)
   ```
     pip install pillow
   ```
-- migrasi database
-- tambahkan image pada admin
+- migrasi database (CLI)
+  ```
+    python manage.py makemigration
+    python manage.py migrate
+  ```
+- tambahkan cover pada admin (admin.py)
   ```
       #yang ditampilkan di movie
       list_display = ('title','cover','show_genres', 'posted_by', 'show_from', 'show_until', 'created_at', 'show_status')
@@ -267,19 +272,72 @@ Hari ke 4
       #yang ditampilan di form
       fields = ('title','cover','description', 'show_from', 'show_until', 'genres')
   ```
-- Menambah konfigurasi settings.py
+- Menambah konfigurasi media (settings.py)
+  Note : media digunakan sebagai storage untuk cover
   ```
     MEDIA_URL = '/media'
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
   ```
-- urls.py
+- Mengubungkan url media (urls.py)
   ```
-  if settings.DEBUG:
-      urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
   ```
-- ubah UI dashboard.html
+- ubah UI (dashboard.html)
   ```
     <img src="{{data.cover.url}}" alt="" />
+  ```
+
+#Setting User Authentificarion
+- UI (index.html)
+  ```
+    <div class="col-md-3">
+        {% block sidebar %}
+        {% if user.is_authenticated %}
+          <div class="panel panel-default">
+            <div class="panel-heading">User Aktif</div>
+            <div class="panel-body">
+                Selamat Datang {{user.username}} di Pemesanan Tiket Online
+                <br>
+                <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+            </div>
+          </div>
+        {% else %}
+          <div class="panel panel-default">
+            <div class="panel-heading">Login &nbsp; Register</div>
+            <div class="panel-body">
+                <a href="{% url 'login' %}" class="btn btn-success">Login</a>
+                <br>
+                <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+            </div>
+          </div>
+        {% endif %}{% endblock %}
+    </div>
+  ```
+- url (urls.py)
+  ```
+    url(r'^login/', auth_views.login , {'template_name': 'login.html'}, name="login"),
+    url(r'^logout/', auth_views.logout , {'next_page':'/'} , name="logout"),
+    url(r'^pendaftaran/',IndexView.as_view() , name="register"),
+  ```
+- setting redirect sehabis login/logout (settings.py)
+  ```
+    LOGIN_REDIRECT_URL = 'index  
+  ```
+- bikin ui login di sidebar (login.html)
+  ```
+    {% extends 'index.html' %}
+    {% block sidebar %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form action="index.html" method="post">
+          {% csrf_token %}{{ form.as_p}}
+          <button type="submit" class="btn btn-success">Login</button>
+          <a href="{% url 'index' %}" class="btn btn-primary">Kembali Ke Beranda</a>
+        </form>
+      </div>
+    </div>
+    {% endblock %}
   ```
