@@ -246,3 +246,40 @@
       </div>
     {% endblock%}
   ```
+
+Hari ke 4
+- Menmbahkan gambar models.py
+  ```
+  class  Movie(models.Model):
+    cover = models.ImageField(uploda_to="movie_covers/", blank=True, default="no-pre.png")
+  ```
+  Note : seca
+- Install pillow
+  ```
+    pip install pillow
+  ```
+- migrasi database
+- tambahkan image pada admin
+  ```
+      #yang ditampilkan di movie
+      list_display = ('title','cover','show_genres', 'posted_by', 'show_from', 'show_until', 'created_at', 'show_status')
+
+      #yang ditampilan di form
+      fields = ('title','cover','description', 'show_from', 'show_until', 'genres')
+  ```
+- Menambah konfigurasi settings.py
+  ```
+    MEDIA_URL = '/media'
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+  ```
+- urls.py
+  ```
+  if settings.DEBUG:
+      urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+  ```
+- ubah UI dashboard.html
+  ```
+    <img src="{{data.cover.url}}" alt="" />
+  ```

@@ -20,6 +20,7 @@ class  Genre(models.Model):
 
 class  Movie(models.Model):
     title = models.CharField(max_length=200, verbose_name="judul") #verbose_name digunakaan untuk mengubah nama di UI
+    cover = models.ImageField(upload_to="movie_covers/", blank=True, default="no-pre.png")
     description = models.TextField("deskripsi",null=True, blank=True)#mengubah nama di UI juga bisa di parameter pertama
     show_from = models.DateField()
     show_until = models.DateField()

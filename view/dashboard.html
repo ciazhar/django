@@ -7,7 +7,7 @@
       {% if data.in_show == 1 %}
         <div class="col-md-4">
           <a href="">
-            <img src="{% static 'images/no-pre.png' %}" alt="" />
+            <img src="{{data.cover.url}}" alt="" />
             <h3>{{data.title}}</h3>
             <div>tayang : {{data.show_from}} - {{data.show_until}} </div>
           </a>

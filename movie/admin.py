@@ -7,10 +7,10 @@ class  GenreAdmin(admin.ModelAdmin):
 
 class  MovieAdmin(admin.ModelAdmin):
     #yang ditampilkan di movie
-    list_display = ('title','show_genres', 'posted_by', 'show_from', 'show_until', 'created_at', 'show_status')
+    list_display = ('title','cover','show_genres', 'posted_by', 'show_from', 'show_until', 'created_at', 'show_status')
 
     #yang ditampilan di form
-    fields = ('title','description', 'show_from', 'show_until', 'genres')
+    fields = ('title','cover','description', 'show_from', 'show_until', 'genres')
 
     #otomatisasi save posted by
     def save_model(self, request, obj, form, change):
