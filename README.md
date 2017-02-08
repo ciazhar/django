@@ -80,7 +80,7 @@
   ```
 - buat skrip migrasi :
   ```
-    python manage.py makemigration
+    python manage.py makemigrations
   ```
 - migrasi ke database :
   ```
@@ -261,7 +261,7 @@ Hari ke 4
   ```
 - migrasi database (CLI)
   ```
-    python manage.py makemigration
+    python manage.py makemigrations
     python manage.py migrate
   ```
 - tambahkan cover pada admin (admin.py)
@@ -340,4 +340,184 @@ Hari ke 4
       </div>
     </div>
     {% endblock %}
+  ```
+
+#Buat aplikasi member
+- bikin aplikasi member(CLI)
+  ```
+    python manage.py startapp member
+  ```
+-  bikin model (member/models.py)
+  ```
+    from __future__ import unicode_literals
+
+    from django.db import models
+    from django.contrib.auth.models import User
+
+    # Create your models here.
+    class Member(models.Model):
+        user = models.OneToOneField(User)
+        address = models.CharField(max_length=200, null=True, blank=True)
+        phone = models.CharField(max_length=20)
+        prof_pic = models.ImageField(null=True, blank=True)
+        register_at = models.DateTimeField(auto_now_add=True)
+
+  ```
+- tambahkan pada member apps (setting.py)
+  ```
+    INSTALLED_APPS = [
+      'member'
+    ]
+  ```
+
+- Custom member fields(member/forms.py)
+  ```
+    from django.forms import ModeForm
+    from django import forms
+    from django.contrib.auth.models import User
+    from member.models import Member
+
+    class UserForm(ModelForm):
+        password1 = forms.CharField(max_length=40)
+        password2 = forms.CharField(max_length=40)
+
+        class Meta:
+            model = User
+            fields = ('username', 'password1','password2', 'first_name', 'last_name', 'email')#kalo dikosongkan dia ngambil semua
+
+        def clean(self):
+            password1 = self.cleaned_data.get('password1')
+            password2 = self.cleaned_data.get('password2')
+
+            if(password1 != password2):
+                raise forms.ValidationError('Password dan konfirmasi harus sama')
+
+            return self.cleaned_data
+
+    class MemberForm(ModelForm):
+        class Meta:
+            model = Member
+            fields = ('prof_pic', 'address', 'phone')
+
+  ```
+- UI register (register.html)
+  ```
+    {% extends index.html %}
+    {% block content %}
+    <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}{{form.as_p}}
+      <button class="btn btn-success" type="submit">Daftar Member</button>
+      <a href="{% url 'index' %}" class="btn">Kembali Ke Beranda</a>
+
+    </form>
+    {% endblock %}
+  ```
+- controller register (member/view.html)
+  ```
+    from django.shortcuts import render
+    from .forms import UserForm,MemberForm
+    # Create your views here.
+    #ada 2 buah view dlm djangon yaitu class based view atau function based view
+    #kalo ini pake function based view
+
+    def register(request):
+        return render(request, 'register.html',{'userform':UserForm,'meberform':MemberForm})
+  ```
+- url
+  ```
+    url(r'^pendaftaran/',register , name="register"),
+  ```
+#Costumisasi UI dengan crispy form
+- install crispy forms
+  ```
+    pip install django-crispy-forms
+  ```
+- setting.py
+  ```
+  INSTALLED_APPS [
+    'crispy_forms'  
+  ]
+  CRISPY_TEMPLATE_PACK = 'bootstrap3'
+  ```
+- add crispy forms (register.html)
+ {% load crispy_forms_tags %}
+{{userform|crispy}} {{memberform|crispy}}
+
+#Costumize TopUp
+- UI (index.html)
+  ```
+  <div class="col-md-4">
+      {% block sidebar %}
+      {% if user.is_authenticated %}
+        <div class="panel panel-default">
+          <div class="panel-heading">User Aktif</div>
+          <div class="panel-body">
+              <img src="{{user.member.prof_pic.url}}" class="img-responsive" />
+                Selamat Datang {{user.first_name}} {{user.last_name}} di Pemesanan Tiket Online
+                <div>
+              </div>
+              <ul>
+                <li>Sisa Saldo : Rp. 0</li>
+                <li>
+                  <a href="" class="btn btn-primary btn-xs">Cek List Top Up</a>
+                  <a href="" class="btn btn-primary btn-xs">Top Up Saldo</a>
+                </li>
+              </ul>
+              <br>
+              <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+          </div>
+        </div>
+      {% else %}
+        <div class="panel panel-default">
+          <div class="panel-heading">Login &nbsp; Register</div>
+          <div class="panel-body">
+              <a href="{% url 'login' %}" class="btn btn-success">Login</a>
+              <br>
+              <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+          </div>
+        </div>
+      {% endif %}{% endblock %}
+  </div>
+  ```
+- class Top Up(member/models.py)
+  ```
+
+  class TopUp(models.Model):
+      STATUS_CHOICES = (('p','pending'),('v','valid'),('i','invalid'))
+      member = models.ForeignKey(Member)
+      amount = models.IntegerField()
+      receipt = models.ImageField("Bukti Bayar", upload_to='receipts/')
+      status = models.CharField(max_length=1)
+      upload_at = models.DateTimeField(auto_now_add=True)
+      validated_at = models.DateTimeField(auto_now=True)
+      checked_by = models.ForeignKey(User, null=True,blank=True)
+  ```
+- migrasi database(CLI)
+  ```
+    python manage.py makemigrations
+    python manage.py migrate
+  ```
+- add ke admin (member/admin.py)
+  ```
+    from django.contrib import admin
+    from .models import TopUp,Member
+
+    # Register your models here.
+    class MemberAdmin(admin.ModelAdmin):
+        list_display = ('user','phone','address')
+
+    class TopUpAdmin(admin.ModelAdmin):
+        list_display = ('member','amount','receipt','status','uploaded_at','validated_at')
+        fields = ('member','amount','receipt','status')
+        readonly_fields = ('member','amount','receipt')
+
+        def save_model(self, request, obj, form, change):
+            obj.checked_by = request.user
+            super(TopUpAdmin, self).save_model(request, obj, form, change)
+
+        def has_add_permission(self, request):
+            return False
+
+    admin.site.register(TopUp, TopUpAdmin)
+    admin.site.register(Member, MemberAdmin)
   ```

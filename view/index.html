@@ -43,18 +43,28 @@
       </nav>
 
     <div class="row">
-      <div class="col-md-9">
+      <div class="col-md-8">
           {% block content %}
 
           {% endblock%}
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
           {% block sidebar %}
           {% if user.is_authenticated %}
             <div class="panel panel-default">
               <div class="panel-heading">User Aktif</div>
               <div class="panel-body">
-                  Selamat Datang {{user.username}} di Pemesanan Tiket Online
+                  <img src="{{user.member.prof_pic.url}}" class="img-responsive" />
+                    Selamat Datang {{user.first_name}} {{user.last_name}} di Pemesanan Tiket Online
+                    <div>
+                  </div>
+                  <ul>
+                    <li>Sisa Saldo : Rp. 0</li>
+                    <li>
+                      <a href="" class="btn btn-primary btn-xs">Cek List Top Up</a>
+                      <a href="" class="btn btn-primary btn-xs">Top Up Saldo</a>
+                    </li>
+                  </ul>
                   <br>
                   <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
               </div>
