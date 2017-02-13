@@ -4,6 +4,42 @@ Berikut ini merupakan serangkaian dokumentasi Tutorial mempelajari Django Framew
 
 # Sekilas tentang Django
 Django merupakan sebuah web Framework yang ditulis dalam bahasa pemrograman Python. Django sendiri menggunakan Design Pattern MTV atau Model, Template, View. Model mewakili komponen yang bersangkutan dengan database dan bussiness logic. Template berkaitan dengan UI. Dan View berkaitan dengan apa yang akan ditampilkan ke UI.
+Dalam membuat view sendiri ada 2 cara yaitu :
+- class based view, contoh :
+  ```
+  class TopUpFormView(CreateView):
+      form_class = TopUpForm
+      template_name = 'topup_form.html'
+
+      def form_valid(self,form):
+          topup = form.save(commit=False)
+          topup.member = self.request.user
+          topup.status = 'p'
+          topup.save()
+          return redirect('index')
+  ```
+- function based view, contoh :
+  ```
+  def register(request):
+      if request.method == 'POST':
+          userform = UserForm(request.POST)
+          memberform = MemberForm(request.POST)
+          if userform.is_valid() * memberform.is_valid():
+              user = userform.save(commit=False)
+              user.set_password(userform.cleaned_data['password1'])
+              user.save()
+
+              member = memberform.save(commit=False)
+              member.user = user
+              member.save()
+              return redirect('login')
+      else:
+          userform = UserForm()
+          memberform = MemberForm()
+      return render(request, 'register.html',{'userform':userform,'memberform':memberform})
+  ```
+
+
 
 # Setup Development Environment
   (CLI)

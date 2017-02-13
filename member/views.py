@@ -3,7 +3,7 @@ from .forms import UserForm,MemberForm, TopUpForm
 from django.views.generic import CreateView, ListView
 from member.models import TopUp
 # Create your views here.
-#ada 2 buah view dlm djangon yaitu class based view atau function based view
+#ada 2 buah view dlm django yaitu class based view atau function based view
 #kalo ini pake function based view
 
 def register(request):
@@ -30,7 +30,7 @@ class TopUpFormView(CreateView):
 
     def form_valid(self,form):
         topup = form.save(commit=False)
-        topup.member = self.request.user
+        topup.member = self.request.user.member
         topup.status = 'p'
         topup.save()
         return redirect('index')
