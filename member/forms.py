@@ -1,7 +1,13 @@
 from django.forms import ModelForm
 from django import forms
 from django.contrib.auth.models import User
-from member.models import Member
+from member.models import Member, TopUp
+
+class TopUpForm(ModelForm):
+    class Meta:
+        model = TopUp
+        fields = ('amount', 'receipt')
+
 
 class UserForm(ModelForm):
     password1 = forms.CharField(max_length=40, widget = forms.PasswordInput, label = "Password")

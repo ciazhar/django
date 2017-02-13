@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+{% block content %}
+<h3>List TopUp </h3>
+<hr>
+<table>
+  <tr>
+    <th>Tanggal</th>
+    <th>Jumlah</th>
+    <th>Bukti Bayar</th>
+    <th>Status</th>
+  </tr>
+  {% for data in object_list %}
+    <tr>
+      <td> {{data.uploaded_at}} </td>
+      <td> {{data.amount}} </td>
+      <td> <a href="{{ data.receipt.url }}" target="_blank">{{Tampil}}</a> </td>
+      <td>{{ data.status }}</td>
+    </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

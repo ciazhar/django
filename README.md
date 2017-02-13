@@ -1,74 +1,100 @@
-#Tutorial Django
+# Tutorial Django
 
-#setup environment
+Berikut ini merupakan serangkaian dokumentasi Tutorial mempelajari Django Framework. Dokumentasi ini sendiri dibuat berdasarkan tutorial oleh `Fahri Firdausillah` dari `Udinus`, dan dalam pengembangan dibantu oleh `Aan` dari `SinauDev`. Semoga dokumentasi ini dapat memberi bermanfaat bagi yang ingin belajar django.
+
+# Sekilas tentang Django
+Django merupakan sebuah web Framework yang ditulis dalam bahasa pemrograman Python. Django sendiri menggunakan Design Pattern MTV atau Model, Template, View. Model mewakili komponen yang bersangkutan dengan database dan bussiness logic. Template berkaitan dengan UI. Dan View berkaitan dengan apa yang akan ditampilkan ke UI.
+
+# Setup Development Environment
+  (CLI)
   ```
     install python3
     pip install djanggo
   ```
   Note : pastikan install python-pip
 
-#Setup project
-- Bikin project
+# Setup project
+- Membuat project(CLI)
   ```
     django-admin startproject tutorial_bioskop
   ```
-  NOte : pastikan install python-django-common
-- add project ke text editor
-- migrate database, secara default dia pake SQLite:
+  Note : pastikan install python-django-common
+  Setelah dibuat secara default akan terbuat direktory seperti berikut:
+    ```
+      tutorial_bioskop/
+    |-- tutorial_bioskop
+    |   |-- __init__.py
+    |   |-- settings.py
+    |   |-- urls.py
+    |   `-- wsgi.py
+    `-- manage.py
+    ```
+  Fungis dari masing masing file tersebut adalah
+  1. tutorial_bioskop/ adalah direktori inti yang memuat sebuah project. Perlu diketahui bahwa nama tersebut tidak berpengaruh sama sekali dengan Django, jadi bisa ubah sesuka hati
+  2. manage.py sebuah utilitas yang digunakan untuk melakukan interaksi terhadap project Django dengan berbagai cara. Untuk lebih lengkapnya silahkan membaca https://docs.djangoproject.com/en/1.10/ref/django-admin/
+  3. Direktori tutorial_bioskop/ kedua adalah Python package untuk project yang kita buat. Nama tersebut yang akan digunakan ketika melakukan import package (cont: tutorial_bioskop.urls)
+  4. tutorial_bioskop/__init__.py adalah sebuah berkas kosong yang memberitahukan bahwa direktori tersebut merupakan Python package.
+  5. tutorial_bioskop/settings.py merupakan pengaturan atau konfigurasi untuk project Django itu sendiri. Lebih lengkap nya silahkan baca disini https://docs.djangoproject.com/en/1.10/topics/settings/
+  6. djangotutorial/urls.py merupakan deklarasi URL untuk project Django. Berisi konfigurasi URL pada project yang kita buat. Akan kita bahas pada kesempatan selanjutnya untuk URL Dispatcher dan URLConf.
+  Berikut isi berkas urls.py
+  7. djangotutorial/wsgi.py merupakan dukungan kompatibilitas WSGI dengan web server untuk menjalankan project Django. Nantinya bisa diintegrasikan dengan menggunakan web server pada umumnya seperti apache, nginx dan lain-lain.
+  Django itu sendiri sudah menyediakan web server yang dibuat dengan Python untuk melakukan testing dalam masa development. Jadi memudahkan kita untuk development sebelum memasukan server production. Perlu diingat bahwa web server yang disediakan tidak dianjurkan untuk digunakan pada masa production.
+- Melakukan Migrasi database. Hal ini dilakukan untuk menupdate setiap elemen baru yang berhubungan dengan database. Jika tidak di setting, secara default default Django menggunakan database SQLite:
   ```
     python manage.py migrate
   ```
-- Bikin superuser
+- Membuat superuser (CLI)
   ```
     python manage.py createsuperuser
   ```
 
-#Run project
-- jalankan aplikasi :
+# Run project
+- Menjalankan aplikasi (CLI):
   ```
     python manage.py runserver
   ```
-- run aplikasi di browser :
-  ```
-    localhost:8000
-  ```
-  Note : buat accsess admin localhost:8000/admin, kalo mau ganti di urls.py
+  Perlu diingat bahwa runserver secara default akan menjalankan web server dengan internal IP pada port 8000. Kita bisa mengubah nya dengan menggunakan:
+    ```
+      python manage.py runserver 8989 # untuk ubah port
+      python manage.py runserver 0.0.0.0:8989 # untuk rubah ip dan port
+    ```
+  Oh iya, web server yang sudah berjalan ini sudah otomatis reload ketika kita melakukan perubahan terhadap project. Jadi tidak usah restart web server ketika melakukan perubahan kecuali melakukan penambahan berkas. Lebih lengkap bisa baca disini `https://docs.djangoproject.com/en/1.10/ref/django-admin/#django-admin-runserver`
+  Halaman admin dapat diakses melalui url `http://localhost:8000/admin`. Dan jika ingin mengganti urlnya dapat di konfigurasi di urls.py
 
-#Bikin apps movie
-- bikin apps :
+# Membuat Apps Movie
+- Membuat apps :
   ```
     python manage.py startapp movie
   ```
-- bikin model (movie/models.py):
+- Membuat model (movie/models.py):
   ```
-    from __future__ import unicode_literals
+  class  Genre(models.Model):
+      title = models.CharField(max_length=200)
+      description = models.TextField(null=True, blank=True)
 
-    from django.db import models
-    from django.contrib.auth.models import User
-
-    class  Genre(object):
-        title = models.CharField(max_length=200)
-        description = models.TextField(null=True, blank=True)
-
-    class  movie(object):
-        title = models.Charfield(max_length=200)
-        description = models.TextField(null=True, blank=True)
-        show_from = models.DateField()
-        show_until = models.DateField()
-        genres = models.ManyToManyField(Genre)
-        posted_by = models.ForeignKey(user)
-        created_at = models.DataField(auto_now_add=True)
-        updated_at = models.DateField(auto_now=True)
+  class  Movie(models.Model):
+      title = models.CharField(max_length=200)
+      description = models.TextField(null=True, blank=True)
+      show_from = models.DateField()
+      show_until = models.DateField()
+      genres = models.ManyToManyField(Genre)
+      posted_by = models.ForeignKey(User)
+      created_at = models.DateField(auto_now_add=True)
+      updated_at = models.DateField(auto_now=True)
   ```
-- setting app (settings.py)
+  Keterangan :
+  - auto_now_add berfungsi menunjukkan bahwa data yang dibuat pada field tersebut untuk setiap objek Movie diisi dengan tangal current. Dan data itu tidak dapat dirubah.
+  - auto_now menunjukkan bahwa data yang dibuat pada field tersebut untuk setiap objek Movie diisi dengan tangal current. Dan data itu dapat dirubah.
+- Mendaftarkan app (settings.py)
+  Selanjutnya kita akan mendaftarkan aplikasi kita agar dapat dikenali dan dapat dijalankan.
   ```
-    'movie' ke INSTALLED_APPS
+    INSTALLED_APPS = [
+      'movie'
+    ]
   ```
-- setting admin(admin.py)
+- Mengedit halaman admin(admin.py)
+  Proses ini dilakukan untuk mendaftarkan field apa saja yang akan dimuat ke halaman admin
   ```
-    from django.contrib import admin
-    from .models import Genre, Movie
-
     class  GenreAdmin(admin.ModelAdmin):
         pass
 
@@ -78,6 +104,9 @@
         admin.site.register(Genre, GenreAdmin)
         admin.site.register(Movie, GenreAdmin)
   ```
+  Keterangan :
+  - list_display digunakan untuk mendampilkan field apa saja yang akan ditampilkan di halaman admin
+
 - buat skrip migrasi :
   ```
     python manage.py makemigrations
@@ -87,23 +116,22 @@
     python manage.py migrate
   ```
 
-#Hari ke 2
-
-#Setting UI untuk Movie
-- untuk mengganti nama variabel yang ada di system menjadi berbeda di UI, bisa menggunakan verbose_name, atau menulis di parameter pertama(movie/models.py)
+# Setting UI untuk Movie
+- Untuk mengganti nama variabel yang ada di system menjadi berbeda di UI, bisa menggunakan verbose_name, atau menulis di parameter pertama(movie/models.py)
   ```
-    title = models.CharField(max_length=200, verbose_name="judul") #verbose_name digunakaan untuk mengubah nama di UI
-    description = models.TextField("deskripsi",null=True, blank=True)#mengubah nama di UI juga bisa di parameter pertama
+    title = models.CharField(max_length=200, verbose_name="judul")
+    description = models.TextField("deskripsi",null=True, blank=True)
     show_from = models.DateField()
     show_until = models.DateField()
     genres = models.ManyToManyField(Genre)
     posted_by = models.ForeignKey(User)
-    created_at = models.DateField(auto_now_add=True)#ketika kita membuat pertama kali akan dibuat pawa waktu pertama kali, ketika ada baru gk update
-    updated_at = models.DateField(auto_now=True)#ketika membuat pertambahan maka akan diupdate
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
   ```
-- buat fungsi untuk  Menampilkan macam-macam genre (movie/models.py)
+  Keterangan :
+  - verbose_name digunakaan untuk mengubah nama pada UI. Selain menggunakan verbose_name dapat juga menulisnya di parameter pertama.
+- Membuat fungsi untuk menampilkan macam-macam genre (movie/models.py)
   ```
-    #fungsi Menampilkan macam-macam genre
       def show_genres(self):
           genre = self.genres.all()
           text=''
@@ -111,33 +139,88 @@
               text += data.title+", "
           return text
   ```
-- setting dependency movie(title, description dll) yang akan ditampilkan di UI (movie/admin.py)
+- Mengedit halaman admin (movie/admin.py)
   ```
-    #menentukan field apa saja yang ditampilkan pada tabel UI Movie, termasuk kita bisa menampilkan methode dari model yang di return string
     list_display = ('title','show_genres', 'posted_by', 'show_from', 'show_until', 'created_at', 'show_status')
 
-    #menentukan field apa saja yang ditampilkan pada form UI Movie
     fields = ('title','description', 'show_from', 'show_until', 'genres')
 
-    #override pada prosedur simpan
     def save_model(self, request, obj, form, change):
         obj.posted_by = request.user
         super(MovieAdmin, self).save_model(request,obj,form, change)
   ```
+  Keterangan :
+  - Terdapat penambahan field `show_genres` pada halaman admin yang datanya digenerate dari fungsi show_genres.
+  - `fields` digunakan untuk menentukan field apa saja yang ditampilkan pada form UI Movie.
+  - fungsi save_model digunakan untuk override pada prosedur simpan
 
-#Service di sisi client berupa daftar movie
-- setting directory template ke folder view (setting.py)
+# Service di sisi client berupa daftar movie
+- Konfigurasi directory template ke folder view (setting.py)
   ```
     TEMPLATES = [
         {
-            ...
             'DIRS': ['view'],
-            ...
         },
     ]
   ```
-- bikin UI (index.html)
-- bikin service show status movie (movie/models.py)
+- Membuat UI (index.html)
+  ```
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <title>Penjualan Tiket Bioskop</title>
+
+      <!-- Bootstrap core CSS -->
+      <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+      <!-- Custom styles for this template -->
+      <style>
+        body {
+          padding-top: 20px;
+          padding-bottom: 20px;
+          }
+        .navbar {
+          margin-bottom: 20px;
+          }
+      </style>
+    </head>
+
+    <body>
+      <div class="container">
+        <!-- Static navbar -->
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="#">Pemesanan Tiket Bioskop</a>
+            </div>
+          </div><!--/.container-fluid -->
+        </nav>
+
+        <div class="row">
+          <div class="col-md-8">
+              {% block content %}
+              {% endblock%}
+          </div>
+          <div class="col-md-4">
+              {% block sidebar %}
+              {% endblock %}
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- Bootstrap core JavaScript
+      ================================================== -->
+      <!-- Placed at the end of the document so the pages load faster -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+      <script src="{% static 'js/bootstrap.min.js'%}"></script>
+
+    </body>
+  </html>
+  ```
+- Membuat service show status movie (movie/models.py)
   ```
       #fungsi untuk menampilkan movie sedang tayang, sudah tayang atau segera tayang dengan representasi angka
       def in_show(self):
@@ -157,7 +240,7 @@
           else :
               return "segera tayang"
   ```
-- setting view(movie/views.py)
+- Konfigurasi view(movie/views.py)
   ```
     from django.shortcuts import render
     from django.views.generic import ListView, DetailView, TemplateView
@@ -167,14 +250,14 @@
         model = Movie
         template_name = 'index.html'
   ```
-- bikin mapping url (urls.py)
+- Mapping url (urls.py)
   ```
     urlpatterns = [
-        url(r'^$',IndexView.as_view(),name="index")#dollar ($) merupakan regular expression, merujuk pada url yang didepanya gak ada dan setelahnya gak ada
+        url(r'^$',IndexView.as_view(),name="index")
     ]
   ```
-
-#Hari 3
+  Keterangan :
+  - dollar ($) merupakan regular expression, merujuk pada url yang didepanya gak ada dan setelahnya gak ada
 
 #Bootstrapping UI
 - Add File Bootstrap ke folder static
@@ -520,4 +603,87 @@ Hari ke 4
 
     admin.site.register(TopUp, TopUpAdmin)
     admin.site.register(Member, MemberAdmin)
+  ```
+
+# Membuat Formulir TopUp
+- member/form
+  ```
+  class TopUpForm(ModelForm):
+      class Meta:
+          model = TopUp
+          fields = ('amount', 'receipt')
+  ```
+- member/views
+  ```
+  class TopUpListView(ListView):
+      template_name = 'topup_list.html'
+      model = TopUp
+
+      #fungsi untuk mendampilkan hanya topup history kita
+      def get_queryset(self):
+          return TopUp.objects.filter(member=self.request.user.member)  
+  ```
+- url
+  ```
+  url(r'^topup/', TopUpFormView.as_view(),name="topup_form"),
+  ```
+- ui
+  ```
+  {% extends 'index.html' %}
+  {% load crispy_forms_tags %}
+
+  {% block content %}
+  <h3>Form Upload Bukti Pembayaran TopUp</h3>
+  <hr>
+  <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-success">Upload Top Up</button>
+  </form>
+
+  {% endblock %}
+  ```
+# Membuat List yang udah kita top up
+- member/views
+  ```
+  class TopUpFormView(CreateView):
+      form_class = TopUpForm
+      template_name = 'topup_form.html'
+
+      def form_valid(self,form):
+          topup = form.save(commit=False)
+          topup.member = self.request.user
+          topup.status = 'p'
+          topup.save()
+          return redirect('index')
+  ```
+- url
+  ```
+  url(r'^toplist/', TopUpFormView.as_view(),name="topup_list"),
+  ```
+- ui
+  ```
+  {% extends 'index.html' %}
+  {% block content %}
+  <h3>List TopUp </h3>
+  <hr>
+  <table>
+    <tr>
+      <th>Tanggal</th>
+      <th>Jumlah</th>
+      <th>Bukti Bayar</th>
+      <th>Status</th>
+    </tr>
+    {% for data in object_list %}
+      <tr>
+        <td> {{data.uploaded_at}} </td>
+        <td> {{data.amount}} </td>
+        <td> <a href="{{ data.receipt.url }}" target="_blank">{{Tampil}}</a> </td>
+        <td>{{ data.status }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  {% endblock %}
+
   ```

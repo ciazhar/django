@@ -8,11 +8,14 @@ class Member(models.Model):
     user = models.OneToOneField(User)
     address = models.CharField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=20)
-    prof_pic = models.ImageField("Photo Profile",upload_to='prof_pics/', null=True, blank=True)
+    prof_pic = models.ImageField("Photo Profile",null=True, blank=True)
     register_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user.username
+
+    def user_password(self):
+        return self.user.password
 
 class TopUp(models.Model):
     STATUS_CHOICES = (('p','pending'),('v','valid'),('i','invalid'))
