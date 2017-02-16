@@ -295,9 +295,9 @@ Dalam membuat view sendiri ada 2 cara yaitu :
   Keterangan :
   - dollar ($) merupakan regular expression, merujuk pada url yang didepanya gak ada dan setelahnya gak ada
 
-#Bootstrapping UI
+# Bootstrapping UI
 - Add File Bootstrap ke folder static
-- Setting default static files(settings.py)
+- Setting default static files repository(settings.py)
   ```
     STATIC_URL = '/static/'
     STATICFILES_DIRS = [
@@ -313,11 +313,11 @@ Dalam membuat view sendiri ada 2 cara yaitu :
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     ...
   ```
-  Note :
+  Keterangan :
   dengan memanggil {% load static %} kita dapat menimpor file folder static
   dengan memanggil {% static 'css/bootstrap.min.css' %}
 
-#Template Inheritance
+# Template Inheritance
 - Memasukkan komponen dari dashboard.html ke index.html menggunakan {% block nama-fungsi %}
   (view/index.html)
   ```
@@ -344,7 +344,7 @@ Dalam membuat view sendiri ada 2 cara yaitu :
   Note :
   sintaks {% block content %}{% endblock%} akan memanggil fungsi yang ada di dashboard.html
 
-(view/index.html)
+  (view/index.html)
   ```
     {% extends 'index.html' %}
     {% load static %}
@@ -366,8 +366,7 @@ Dalam membuat view sendiri ada 2 cara yaitu :
     {% endblock%}
   ```
 
-Hari ke 4
-#Menambahkan Pengaturan untuk Upload Cover
+# Menambahkan Pengaturan untuk Upload Cover
 - Menmbahkan variabel untuk cover (models.py)
   ```
     class  Movie(models.Model):
@@ -409,7 +408,7 @@ Hari ke 4
     <img src="{{data.cover.url}}" alt="" />
   ```
 
-#Setting User Authentificarion
+# Setting User Authentificarion
 - UI (index.html)
   ```
     <div class="col-md-3">
@@ -461,12 +460,12 @@ Hari ke 4
     {% endblock %}
   ```
 
-#Buat aplikasi member
-- bikin aplikasi member(CLI)
+# Membuat aplikasi member
+- membuat aplikasi member(CLI)
   ```
     python manage.py startapp member
   ```
--  bikin model (member/models.py)
+- membuat model (member/models.py)
   ```
     from __future__ import unicode_literals
 
@@ -482,7 +481,7 @@ Hari ke 4
         register_at = models.DateTimeField(auto_now_add=True)
 
   ```
-- tambahkan pada member apps (setting.py)
+- tambahkan member pada INSTALLED_APPS apps (setting.py)
   ```
     INSTALLED_APPS = [
       'member'
@@ -519,6 +518,8 @@ Hari ke 4
             fields = ('prof_pic', 'address', 'phone')
 
   ```
+  Keterangan :
+  - Fungsi clean diguankan untuk validasi password
 - UI register (register.html)
   ```
     {% extends index.html %}

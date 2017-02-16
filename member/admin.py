@@ -11,10 +11,12 @@ class TopUpAdmin(admin.ModelAdmin):
     readonly_fields = ('member','amount','receipt')
     actions = ['check_valid','check_invalid']
 
+    #otomatisasi save posted by
     def save_model(self, request, obj, form, change):
         obj.checked_by = request.user
         super(TopUpAdmin, self).save_model(request, obj, form, change)
 
+    
     def has_add_permission(self, request):
         return False
 
@@ -22,7 +24,7 @@ class TopUpAdmin(admin.ModelAdmin):
         queryset.update(status='v', checked_by=request.user)
     check_valid.short_description = "Validasi TopUp"
 
-    def check_valid(self, request, queryset):
+    def check_invalid(self, request, queryset):
         queryset.update(status='i', checked_by=request.user)
     check_valid.short_description = "Invalid TopUp"
 

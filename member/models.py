@@ -14,10 +14,12 @@ class Member(models.Model):
     def __str__(self):
         return self.user.username
 
+    #fungsi untuk mengambil password dari user
     def user_password(self):
         return self.user.password
 
 class TopUp(models.Model):
+    #variabel ini ditulis dengan huruf besar berarti di merupakan tetapan /static final
     STATUS_CHOICES = (('p','pending'),('v','valid'),('i','invalid'))
     member = models.ForeignKey(Member)
     amount = models.IntegerField()
